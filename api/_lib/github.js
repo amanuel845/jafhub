@@ -156,19 +156,57 @@ export function fail(res, status, message, extra = {}) {
 }
 
 /**
- * Normalize the catch-all path from req.query.path and validate it.
- * Returns the joined path (no leading slash) or throws.
+ * Extract catch-all path segments from a Vercel serverless request.
+ *
+ * Why this exists: Vercel does not reliably populate `req.query.path` for
+ * `[...path].js` routes across all runtimes / rewrites. `req.url` always
+ * contains the real pathname (e.g. `/api/github/user/repos?per_page=10`),
+ * so we parse it and fall back to `req.query.path` only when parsing fails.
  */
-export function normalizePath(rawPath) {
-  const segments = Array.isArray(rawPath)
-    ? rawPath
-    : String(rawPath || "").split("/").filter(Boolean);
+export function extractPathSegments(req) {
+  // Primary source: parse the request URL. Always present on Vercel.
+  if (typeof req?.url === "string" && req.url) {
+    try {
+      const u = new URL(req.url, "http://localhost");
+      let p = u.pathname || "";
+      // Strip the mount prefix. Match /api/github, /api/github/, and
+      // tolerate a leading rewrite target like /api/github/[...path].
+      p = p.replace(/^\/api\/github(?:\/|$)/, "");
+      p = p.replace(/^\/+/, "");
+      // If a rewrite left the literal [...path] in the URL, drop it.
+      if (p === "[...path]" || p === "%5B...path%5D") p = "";
+      if (p) return p.split("/").filter(Boolean);
+    } catch {
+      // fall through to query fallback
+    }
+  }
+
+  // Fallback: whatever Vercel handed us in req.query.path.
+  const qp = req?.query?.path;
+  if (Array.isArray(qp) && qp.length) return qp.map(String).filter(Boolean);
+  if (typeof qp === "string" && qp.length) {
+    const s = qp.replace(/^\/+/, "");
+    if (s) return s.split("/").filter(Boolean);
+  }
+
+  return [];
+}
+
+/**
+ * Validate and encode path segments. Throws { status } on invalid input.
+ * Segments may already be decoded by Vercel, or may still be encoded — we
+ * handle both, then re-encode so the upstream URL is safe.
+ */
+export function normalizePathSegments(segments) {
+  if (!Array.isArray(segments) || segments.length === 0) {
+    throw Object.assign(new Error("Empty GitHub API path"), { status: 400 });
+  }
 
   const clean = [];
   for (const seg of segments) {
     let decoded;
-    try { decoded = decodeURIComponent(seg); }
-    catch { throw Object.assign(new Error("Invalid path encoding"), { status: 400 }); }
+    try { decoded = decodeURIComponent(String(seg)); }
+    catch { decoded = String(seg); } // already decoded or malformed; use raw
 
     if (
       !decoded ||
@@ -182,9 +220,6 @@ export function normalizePath(rawPath) {
       throw Object.assign(new Error("Invalid GitHub API path"), { status: 400 });
     }
     clean.push(encodeURIComponent(decoded));
-  }
-  if (!clean.length) {
-    throw Object.assign(new Error("Empty GitHub API path"), { status: 400 });
   }
   return clean.join("/");
 }
