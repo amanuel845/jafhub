@@ -5,8 +5,9 @@ import {
   applyCors,
   buildUpstreamHeaders,
   copyUpstreamHeaders,
+  extractPathSegments,
   fail,
-  normalizePath,
+  normalizePathSegments,
   readBody,
   resolveAuth
 } from "../_lib/github.js";
@@ -26,15 +27,18 @@ export default async function handler(req, res) {
     return fail(res, 405, "Method not allowed", { allowed: [...ALLOWED_METHODS] });
   }
 
+  // --- Path resolution ---
   let joinedPath;
   try {
-    joinedPath = normalizePath(req.query?.path);
+    const segments = extractPathSegments(req);
+    joinedPath = normalizePathSegments(segments);
   } catch (e) {
-    return fail(res, e.status || 400, e.message || "Invalid path");
+    return fail(res, e.status || 400, e.message || "Invalid path", {
+      hint: "Provide a GitHub REST path, e.g. /api/github/user or /api/github/repos/octocat/Hello-World."
+    });
   }
 
-  // Forward query params from the original request URL, excluding the
-  // framework-injected catch-all key.
+  // --- Query string ---
   let search = "";
   try {
     const incoming = new URL(req.url, "http://localhost");
@@ -47,6 +51,7 @@ export default async function handler(req, res) {
 
   const targetUrl = `${GITHUB_API}/${joinedPath}${search ? `?${search}` : ""}`;
 
+  // --- Body ---
   let body;
   try {
     body = await readBody(req, 1024 * 1024);
@@ -54,6 +59,7 @@ export default async function handler(req, res) {
     return fail(res, e.status || 400, e.message || "Bad request");
   }
 
+  // --- Proxy ---
   try {
     const upstream = await fetch(targetUrl, {
       method,
