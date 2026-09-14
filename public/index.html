@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080b10">
+<title>jafhub-full · GitHub API Playground</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <div class="logo">◉ jafhub-full</div>
+  <span class="tag">V3 · REST + GraphQL</span>
+  <div class="sp"></div>
+  <span id="authState" class="authstate public">● public</span>
+  <span id="rate" class="rate">Rate —</span>
+  <button id="authBtn">Auth</button>
+  <a href="/docs.html" style="text-decoration:none"><button>Docs</button></a>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-v="rest">REST Explorer</button>
+  <button class="tab" data-v="graphql">GraphQL</button>
+  <button class="tab" data-v="rate">Rate &amp; Usage</button>
+  <button class="tab" data-v="history">History</button>
+  <button class="tab" data-v="about">About</button>
+</nav>
+
+<div class="layout">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+
+    <section id="v-rest" class="view active">
+      <div class="bar">
+        <select id="method" aria-label="HTTP method">
+          <option>GET</option><option>POST</option><option>PUT</option>
+          <option>PATCH</option><option>DELETE</option><option>HEAD</option>
+        </select>
+        <input id="path" class="path" value="/user" spellcheck="false" aria-label="GitHub API path">
+        <button id="send" class="primary">Send</button>
+        <button id="clearBody">Clear</button>
+        <button id="snippet">cURL</button>
+      </div>
+      <div class="workspace">
+        <div class="pane">
+          <div class="title">REQUEST BODY <button id="fmt">Format</button></div>
+          <textarea id="body" class="editor" placeholder="JSON body for POST / PUT / PATCH / DELETE"></textarea>
+          <div id="reqStatus" class="status">Ready.</div>
+        </div>
+        <div class="pane">
+          <div class="title">RESPONSE <button id="raw">Raw</button><button id="copy">Copy</button></div>
+          <div id="out" class="out">Choose an endpoint and press Send.</div>
+          <div id="resStatus" class="status">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-graphql" class="view">
+      <div class="bar">
+        <button id="gRun" class="primary">Run Query</button>
+        <button id="gExample">Example</button>
+        <button id="gCopy">Copy</button>
+      </div>
+      <div class="workspace">
+        <div class="pane">
+          <div class="title">GRAPHQL QUERY</div>
+          <textarea id="gQuery" class="gql"></textarea>
+          <div class="title">VARIABLES</div>
+          <textarea id="gVars" class="editor" style="height:110px">{}</textarea>
+        </div>
+        <div class="pane">
+          <div class="title">RESPONSE</div>
+          <div id="gOut" class="out">Run a query to see the response.</div>
+          <div id="gStatus" class="status">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-rate" class="view">
+      <div class="cards">
+        <div class="card"><div class="muted">Remaining</div><div id="remain" class="big">—</div></div>
+        <div class="card"><div class="muted">Limit</div><div id="limit" class="big">—</div></div>
+        <div class="card"><div class="muted">Used</div><div id="used" class="big">—</div></div>
+        <div class="card"><div class="muted">Resource</div><div id="resource" class="big">—</div></div>
+        <div class="card"><div class="muted">Last HTTP</div><div id="last" class="big">—</div></div>
+        <div class="card"><div class="muted">Session requests</div><div id="count" class="big">0</div></div>
+        <div class="card wide">
+          <b>Rate-limit telemetry</b>
+          <p class="muted">
+            Values are observed from GitHub response headers. Different resources and
+            authentication modes have different limits; this panel does not compute a
+            universal quota.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-history" class="view">
+      <div class="panel">
+        <div class="panelhead">REQUEST HISTORY
+          <button id="clearHistory" style="float:right;padding:4px 7px">Clear</button>
+        </div>
+        <div id="history" class="history"></div>
+      </div>
+    </section>
+
+    <section id="v-about" class="view">
+      <div class="doc">
+        <h2>About jafhub-full</h2>
+        <p class="muted">Merged GitHub REST + GraphQL playground for Vercel.</p>
+        <p>
+          <span class="pill">REST</span><span class="pill">GraphQL</span>
+          <span class="pill">Server token</span><span class="pill">Client PAT</span>
+          <span class="pill">Rate telemetry</span><span class="pill">History</span>
+          <span class="pill">cURL</span><span class="pill">Mobile</span>
+        </p>
+
+        <h3>Auth modes</h3>
+        <table>
+          <tr><th>Mode</th><th>When</th><th>Header used</th></tr>
+          <tr><td><code>client</code></td><td>Browser sends <code>Authorization</code></td><td>Browser-supplied Bearer token</td></tr>
+          <tr><td><code>server</code></td><td>No browser token and <code>GITHUB_TOKEN</code> is set</td><td>Server env token</td></tr>
+          <tr><td><code>public</code></td><td>Neither present</td><td>None (GitHub public limits)</td></tr>
+        </table>
+        <p class="muted">The header <code>X-Playground-Auth-Mode</code> on every response reports which mode was used.</p>
+
+        <h3>Endpoints</h3>
+        <ul>
+          <li><code>/api/github/&lt;path&gt;</code> — REST proxy to <code>https://api.github.com</code></li>
+          <li><code>/api/graphql</code> — GraphQL proxy</li>
+          <li><code>/api/meta</code> — server info &amp; auth mode</li>
+        </ul>
+
+        <h3>Security notes</h3>
+        <ul>
+          <li>The proxy never forwards to an arbitrary upstream.</li>
+          <li>Request headers are allowlisted; response headers are allowlisted.</li>
+          <li>CORS is off unless <code>ALLOWED_ORIGINS</code> is set.</li>
+          <li>Bodies are capped (1 MB REST, 256 KB GraphQL).</li>
+          <li>Browser tokens live in <code>localStorage</code>; use a fine-grained PAT with minimal scope.</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Auth modal -->
+<div id="authModal" class="modal">
+  <div class="box">
+    <h2 style="margin-top:0">GitHub authentication</h2>
+    <p class="muted" id="authHelp">
+      Fine-grained PAT · stored in this browser's localStorage only.
+    </p>
+    <textarea id="token" placeholder="github_pat_…" spellcheck="false"></textarea>
+    <div class="actions">
+      <button id="clearAuth">Clear</button>
+      <button id="cancelAuth">Cancel</button>
+      <button id="saveAuth" class="primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- cURL modal -->
+<div id="snipModal" class="modal">
+  <div class="box">
+    <h2 style="margin-top:0">cURL request</h2>
+    <textarea id="snip" readonly></textarea>
+    <div class="actions">
+      <button id="closeSnip">Close</button>
+      <button id="copySnip" class="primary">Copy</button>
+    </div>
+  </div>
+</div>
+
+<script src="./app.js" defer></script>
+</body>
+</html>
