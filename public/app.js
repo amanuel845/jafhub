@@ -82,6 +82,61 @@
   let count = Number(sessionStorage.getItem("gh_count") || 0);
   let meta = { authMode: "public", version: "unknown" };
 
+  // ---------- Preset dropdown ----------
+
+  // Encode "METHOD <space> path" so the select's value is unique per entry.
+  // The method has no spaces, so `indexOf(" ")` splits correctly even if the
+  // path contains query strings with spaces.
+  const presetValue = (method, path) => `${method} ${path}`;
+
+  function buildPresetDropdown() {
+    const sel = $("preset");
+    if (!sel) return;
+
+    sel.innerHTML = '<option value="">— Select API surface / endpoint —</option>';
+
+    for (const [groupName, endpoints] of GROUPS) {
+      const og = document.createElement("optgroup");
+      og.label = groupName;
+      for (const [method, path, label] of endpoints) {
+        const opt = document.createElement("option");
+        opt.value = presetValue(method, path);
+        // Show the group so it reads well when the dropdown is open.
+        opt.textContent = `${method} · ${label}  (${path})`;
+        opt.title = `${groupName} → ${label}`;
+        og.appendChild(opt);
+      }
+      sel.appendChild(og);
+    }
+
+    sel.addEventListener("change", () => {
+      const v = sel.value;
+      if (!v) return;
+      const sp = v.indexOf(" ");
+      if (sp < 1) return;
+      const method = v.slice(0, sp);
+      const path = v.slice(sp + 1);
+      $("method").value = method;
+      $("path").value = path;
+      // Focus path so the user can tweak placeholders (OWNER/REPO) immediately.
+      $("path").focus();
+      $("path").setSelectionRange(path.length, path.length);
+    });
+  }
+
+  // Keep the dropdown in sync when the user types a path or changes method.
+  function syncPresetSelection() {
+    const sel = $("preset");
+    if (!sel) return;
+    const want = presetValue($("method").value, $("path").value.trim());
+    let match = "";
+    for (const opt of sel.options) {
+      if (opt.value === want) { match = opt.value; break; }
+    }
+    // Setting to "" resets to the placeholder when nothing matches.
+    sel.value = match;
+  }
+
   // ---------- Auth ----------
 
   const getToken = () => localStorage.getItem("github_token") || "";
@@ -102,6 +157,7 @@
       "● public";
 
     const help = $("authHelp");
+    if (!help) return;
     if (meta.authMode === "server") {
       help.textContent =
         "A server token is configured. Entering your own PAT overrides it " +
@@ -155,6 +211,7 @@
         b.addEventListener("click", () => {
           $("method").value = method;
           $("path").value = path;
+          syncPresetSelection();
         });
         wrap.appendChild(b);
       }
@@ -240,6 +297,7 @@
         if (!item) return;
         $("method").value = item.m;
         $("path").value = item.p;
+        syncPresetSelection();
         view("rest");
       });
     });
@@ -380,6 +438,10 @@
       if (e.key === "Enter") sendRest();
     });
 
+    // Keep the preset dropdown consistent with what the user typed / picked.
+    $("method").addEventListener("change", syncPresetSelection);
+    $("path").addEventListener("input", syncPresetSelection);
+
     $("fmt").addEventListener("click", () => {
       try { $("body").value = JSON.stringify(JSON.parse($("body").value), null, 2); }
       catch { alert("Invalid JSON"); }
@@ -455,8 +517,10 @@
 
   document.addEventListener("DOMContentLoaded", async () => {
     buildSidebar();
+    buildPresetDropdown();
     wire();
     renderHistory();
+    syncPresetSelection();
     $("count").textContent = count;
     $("gExample").click();
     await loadMeta();
