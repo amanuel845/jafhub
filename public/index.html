@@ -7,6 +7,19 @@
 <meta name="theme-color" content="#080b10">
 <title>jafhub-full · GitHub API Playground</title>
 <link rel="stylesheet" href="./style.css">
+<style>
+  /* Local tweaks for the preset dropdown; keeps it from dominating the bar. */
+  #preset {
+    max-width: 340px;
+    min-width: 180px;
+    background: var(--p3);
+  }
+  #preset optgroup { color: var(--m); font-style: normal; }
+  #preset option { color: var(--t); }
+  @media (max-width: 850px) {
+    #preset { max-width: none; flex: 1 1 100%; }
+  }
+</style>
 </head>
 <body>
 <header>
@@ -31,17 +44,24 @@
   <aside class="side" id="side"></aside>
   <main class="main">
 
-    <section id="v-rest" class="view active">
+    <inputsection id="v-rest" class="view active">
       <div class="bar">
         <select id="method" aria-label="HTTP method">
           <option>GET</option><option>POST</option><option>PUT</option>
           <option>PATCH</option><option>DELETE</option><option>HEAD</option>
         </select>
-        <input id="path" class="path" value="/user" spellcheck="false" aria-label="GitHub API path">
+
+        <select id="preset" aria-label="API surface and endpoint">
+          <option value="">— Select API surface / endpoint —</option>
+        </select>
+
+        < id="path" class="path" value="/user" spellcheck="false" aria-label="GitHub API path">
+
         <button id="send" class="primary">Send</button>
         <button id="clearBody">Clear</button>
         <button id="snippet">cURL</button>
       </div>
+
       <div class="workspace">
         <div class="pane">
           <div class="title">REQUEST BODY <button id="fmt">Format</button></div>
