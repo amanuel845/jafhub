@@ -4,58 +4,60 @@
 
   const $ = (id) => document.getElementById(id);
 
+  // Catalog uses {user} and {repo} tokens. They are substituted with the
+  // values from the Account dialog before the path is placed in the input.
   const GROUPS = [
     ["Core", [
       ["GET", "/", "API root"],
       ["GET", "/user", "Authenticated user"],
       ["GET", "/rate_limit", "Rate limits"],
-      ["GET", "/users/octocat", "Public user"],
-      ["GET", "/users/octocat/repos", "User repositories"],
+      ["GET", "/users/{user}", "Public user"],
+      ["GET", "/users/{user}/repos", "User repositories"],
       ["GET", "/user/repos", "My repositories"]
     ]],
     ["Repositories", [
-      ["GET", "/repos/OWNER/REPO", "Repository"],
-      ["GET", "/repos/OWNER/REPO/branches", "Branches"],
-      ["GET", "/repos/OWNER/REPO/commits", "Commits"],
-      ["GET", "/repos/OWNER/REPO/contents/README.md", "File contents"],
-      ["GET", "/repos/OWNER/REPO/releases", "Releases"],
-      ["GET", "/repos/OWNER/REPO/tags", "Tags"],
-      ["GET", "/repos/OWNER/REPO/collaborators", "Collaborators"],
-      ["GET", "/repos/OWNER/REPO/contributors", "Contributors"],
-      ["GET", "/repos/OWNER/REPO/deployments", "Deployments"],
-      ["GET", "/repos/OWNER/REPO/environments", "Environments"],
-      ["GET", "/repos/OWNER/REPO/hooks", "Webhooks"]
+      ["GET", "/repos/{user}/{repo}", "Repository"],
+      ["GET", "/repos/{user}/{repo}/branches", "Branches"],
+      ["GET", "/repos/{user}/{repo}/commits", "Commits"],
+      ["GET", "/repos/{user}/{repo}/contents/README.md", "File contents"],
+      ["GET", "/repos/{user}/{repo}/releases", "Releases"],
+      ["GET", "/repos/{user}/{repo}/tags", "Tags"],
+      ["GET", "/repos/{user}/{repo}/collaborators", "Collaborators"],
+      ["GET", "/repos/{user}/{repo}/contributors", "Contributors"],
+      ["GET", "/repos/{user}/{repo}/deployments", "Deployments"],
+      ["GET", "/repos/{user}/{repo}/environments", "Environments"],
+      ["GET", "/repos/{user}/{repo}/hooks", "Webhooks"]
     ]],
     ["Issues & PRs", [
-      ["GET", "/repos/OWNER/REPO/issues", "Issues"],
-      ["POST", "/repos/OWNER/REPO/issues", "Create issue"],
-      ["GET", "/repos/OWNER/REPO/issues/1", "Issue"],
-      ["PATCH", "/repos/OWNER/REPO/issues/1", "Update issue"],
-      ["GET", "/repos/OWNER/REPO/pulls", "Pull requests"],
-      ["GET", "/repos/OWNER/REPO/pulls/1", "Pull request"],
-      ["PATCH", "/repos/OWNER/REPO/pulls/1", "Update pull request"],
-      ["GET", "/repos/OWNER/REPO/pulls/1/files", "PR files"],
-      ["GET", "/repos/OWNER/REPO/pulls/1/commits", "PR commits"]
+      ["GET", "/repos/{user}/{repo}/issues", "Issues"],
+      ["POST", "/repos/{user}/{repo}/issues", "Create issue"],
+      ["GET", "/repos/{user}/{repo}/issues/1", "Issue"],
+      ["PATCH", "/repos/{user}/{repo}/issues/1", "Update issue"],
+      ["GET", "/repos/{user}/{repo}/pulls", "Pull requests"],
+      ["GET", "/repos/{user}/{repo}/pulls/1", "Pull request"],
+      ["PATCH", "/repos/{user}/{repo}/pulls/1", "Update pull request"],
+      ["GET", "/repos/{user}/{repo}/pulls/1/files", "PR files"],
+      ["GET", "/repos/{user}/{repo}/pulls/1/commits", "PR commits"]
     ]],
     ["Search", [
       ["GET", "/search/repositories?q=javascript", "Repositories"],
-      ["GET", "/search/code?q=TODO+repo:OWNER/REPO", "Code"],
-      ["GET", "/search/issues?q=is:open+repo:OWNER/REPO", "Issues"],
-      ["GET", "/search/users?q=octocat", "Users"],
+      ["GET", "/search/code?q=TODO+repo:{user}/{repo}", "Code"],
+      ["GET", "/search/issues?q=is:open+repo:{user}/{repo}", "Issues"],
+      ["GET", "/search/users?q={user}", "Users"],
       ["GET", "/search/commits?q=fix", "Commits"]
     ]],
     ["Organizations", [
       ["GET", "/user/orgs", "My organizations"],
-      ["GET", "/orgs/ORG", "Organization"],
-      ["GET", "/orgs/ORG/repos", "Org repositories"],
-      ["GET", "/orgs/ORG/members", "Members"],
-      ["GET", "/orgs/ORG/teams", "Teams"]
+      ["GET", "/orgs/{user}", "Organization"],
+      ["GET", "/orgs/{user}/repos", "Org repositories"],
+      ["GET", "/orgs/{user}/members", "Members"],
+      ["GET", "/orgs/{user}/teams", "Teams"]
     ]],
     ["Actions", [
-      ["GET", "/repos/OWNER/REPO/actions/runs", "Workflow runs"],
-      ["GET", "/repos/OWNER/REPO/actions/workflows", "Workflows"],
-      ["GET", "/repos/OWNER/REPO/actions/artifacts", "Artifacts"],
-      ["POST", "/repos/OWNER/REPO/actions/workflows/WORKFLOW_ID/dispatches", "Dispatch workflow"]
+      ["GET", "/repos/{user}/{repo}/actions/runs", "Workflow runs"],
+      ["GET", "/repos/{user}/{repo}/actions/workflows", "Workflows"],
+      ["GET", "/repos/{user}/{repo}/actions/artifacts", "Artifacts"],
+      ["POST", "/repos/{user}/{repo}/actions/workflows/WORKFLOW_ID/dispatches", "Dispatch workflow"]
     ]],
     ["Gists & Notifications", [
       ["GET", "/gists", "My gists"],
@@ -64,17 +66,17 @@
       ["GET", "/notifications", "Notifications"]
     ]],
     ["Git Data", [
-      ["GET", "/repos/OWNER/REPO/git/refs/heads/main", "Git ref"],
-      ["GET", "/repos/OWNER/REPO/git/trees/main?recursive=1", "Git tree"],
-      ["GET", "/repos/OWNER/REPO/git/commits/COMMIT_SHA", "Git commit"],
-      ["GET", "/repos/OWNER/REPO/git/blobs/BLOB_SHA", "Git blob"]
+      ["GET", "/repos/{user}/{repo}/git/refs/heads/main", "Git ref"],
+      ["GET", "/repos/{user}/{repo}/git/trees/main?recursive=1", "Git tree"],
+      ["GET", "/repos/{user}/{repo}/git/commits/COMMIT_SHA", "Git commit"],
+      ["GET", "/repos/{user}/{repo}/git/blobs/BLOB_SHA", "Git blob"]
     ]],
     ["Packages & Security", [
-      ["GET", "/users/OWNER/packages", "User packages"],
-      ["GET", "/orgs/ORG/packages", "Org packages"],
-      ["GET", "/repos/OWNER/REPO/vulnerability-alerts", "Vulnerability alerts"],
-      ["GET", "/repos/OWNER/REPO/code-scanning/alerts", "Code scanning alerts"],
-      ["GET", "/repos/OWNER/REPO/secret-scanning/alerts", "Secret scanning alerts"]
+      ["GET", "/users/{user}/packages", "User packages"],
+      ["GET", "/orgs/{user}/packages", "Org packages"],
+      ["GET", "/repos/{user}/{repo}/vulnerability-alerts", "Vulnerability alerts"],
+      ["GET", "/repos/{user}/{repo}/code-scanning/alerts", "Code scanning alerts"],
+      ["GET", "/repos/{user}/{repo}/secret-scanning/alerts", "Secret scanning alerts"]
     ]]
   ];
 
@@ -82,28 +84,49 @@
   let count = Number(sessionStorage.getItem("gh_count") || 0);
   let meta = { authMode: "public", version: "unknown" };
 
+  // ---------- Account (configurable) ----------
+
+  const getAccount = () => ({
+    user: (localStorage.getItem("gh_user") || "").trim(),
+    repo: (localStorage.getItem("gh_repo") || "").trim()
+  });
+
+  function substituteTokens(path) {
+    const { user, repo } = getAccount();
+    return String(path)
+      .replaceAll("{user}", user || "{user}")
+      .replaceAll("{repo}", repo || "{repo}");
+  }
+
+  function hasUnresolvedTokens(path) {
+    return /\{user\}|\{repo\}/.test(path);
+  }
+
+  function renderAccount() {
+    const { user, repo } = getAccount();
+    const label = user ? (repo ? `${user}/${repo}` : user) : "not set";
+    $("acctName").textContent = label;
+  }
+
   // ---------- Preset dropdown ----------
 
-  // Encode "METHOD <space> path" so the select's value is unique per entry.
-  // The method has no spaces, so `indexOf(" ")` splits correctly even if the
-  // path contains query strings with spaces.
   const presetValue = (method, path) => `${method} ${path}`;
 
   function buildPresetDropdown() {
     const sel = $("preset");
     if (!sel) return;
 
-    sel.innerHTML = '<option value="">— Select API surface / endpoint —</option>';
+    sel.innerHTML = '<option value="">— Select an endpoint —</option>';
 
     for (const [groupName, endpoints] of GROUPS) {
       const og = document.createElement("optgroup");
       og.label = groupName;
       for (const [method, path, label] of endpoints) {
         const opt = document.createElement("option");
-        opt.value = presetValue(method, path);
-        // Show the group so it reads well when the dropdown is open.
-        opt.textContent = `${method} · ${label}  (${path})`;
-        opt.title = `${groupName} → ${label}`;
+        opt.value = presetValue(method, path);   // keeps tokens
+        opt.textContent = label;                 // label only
+        opt.dataset.label = label;
+        opt.title = `${method} ${substituteTokens(path)}`;
         og.appendChild(opt);
       }
       sel.appendChild(og);
@@ -115,26 +138,59 @@
       const sp = v.indexOf(" ");
       if (sp < 1) return;
       const method = v.slice(0, sp);
-      const path = v.slice(sp + 1);
+      const tokenized = v.slice(sp + 1);
+      const resolved = substituteTokens(tokenized);
+
       $("method").value = method;
-      $("path").value = path;
-      // Focus path so the user can tweak placeholders (OWNER/REPO) immediately.
+      $("path").value = resolved;
       $("path").focus();
-      $("path").setSelectionRange(path.length, path.length);
+      $("path").setSelectionRange(resolved.length, resolved.length);
+
+      if (hasUnresolvedTokens(resolved)) {
+        $("reqStatus").textContent =
+          "Set your account (top-right) to fill {user}/{repo}.";
+      } else {
+        $("reqStatus").textContent = "Ready.";
+      }
     });
   }
 
-  // Keep the dropdown in sync when the user types a path or changes method.
+  // Re-select the option whose resolved form matches what's in the path input.
   function syncPresetSelection() {
     const sel = $("preset");
     if (!sel) return;
-    const want = presetValue($("method").value, $("path").value.trim());
+    const method = $("method").value;
+    const path = $("path").value.trim();
+
     let match = "";
     for (const opt of sel.options) {
-      if (opt.value === want) { match = opt.value; break; }
+      const sp = opt.value.indexOf(" ");
+      if (sp < 1) continue;
+      if (opt.value.slice(0, sp) !== method) continue;
+      if (substituteTokens(opt.value.slice(sp + 1)) === path) {
+        match = opt.value;
+        break;
+      }
     }
-    // Setting to "" resets to the placeholder when nothing matches.
     sel.value = match;
+  }
+
+  // Refresh dropdown labels when the account changes.
+  function refreshPresetLabels() {
+    const sel = $("preset");
+    if (!sel) return;
+    for (const og of sel.querySelectorAll("optgroup")) {
+      for (const opt of og.children) {
+        const v = opt.value;
+        const sp = v.indexOf(" ");
+        if (sp < 1) continue;
+        const tokenized = v.slice(sp + 1);
+        const label = opt.dataset.label || tokenized;
+        opt.textContent = label;
+        opt.title = `${v.slice(0, sp)} ${substituteTokens(tokenized)}`;
+      }
+    }
+    syncPresetSelection();
   }
 
   // ---------- Auth ----------
@@ -173,9 +229,7 @@
     try {
       const r = await fetch("/api/meta");
       if (r.ok) meta = await r.json();
-    } catch {
-      // ignore — UI still works, auth just shows public
-    }
+    } catch {}
     renderAuth();
   }
 
@@ -209,9 +263,14 @@
           `<span class="method ${method}">${method}</span>` +
           `<small>${label}</small>`;
         b.addEventListener("click", () => {
+          const resolved = substituteTokens(path);
           $("method").value = method;
-          $("path").value = path;
+          $("path").value = resolved;
           syncPresetSelection();
+          if (hasUnresolvedTokens(resolved)) {
+            $("reqStatus").textContent =
+              "Set your account (top-right) to fill {user}/{repo}.";
+          }
         });
         wrap.appendChild(b);
       }
@@ -308,6 +367,15 @@
   async function sendRest() {
     let path = $("path").value.trim();
     if (!path.startsWith("/")) path = "/" + path;
+
+    if (hasUnresolvedTokens(path)) {
+      $("out").innerHTML =
+        '<span class="bad">Path still contains {user}/{repo}. ' +
+        'Open Account (top-right) to set them.</span>';
+      $("reqStatus").textContent = "Account not configured.";
+      $("resStatus").textContent = "—";
+      return;
+    }
 
     const method = $("method").value;
     const needsBody = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
@@ -438,7 +506,6 @@
       if (e.key === "Enter") sendRest();
     });
 
-    // Keep the preset dropdown consistent with what the user typed / picked.
     $("method").addEventListener("change", syncPresetSelection);
     $("path").addEventListener("input", syncPresetSelection);
 
@@ -462,6 +529,37 @@
     $("copySnip").addEventListener("click", () =>
       navigator.clipboard?.writeText($("snip").value));
 
+    // Account
+    $("acctBtn").addEventListener("click", () => {
+      const { user, repo } = getAccount();
+      $("acctUser").value = user;
+      $("acctRepo").value = repo;
+      $("acctModal").classList.add("open");
+    });
+    $("acctCancel").addEventListener("click", () =>
+      $("acctModal").classList.remove("open"));
+    $("acctClear").addEventListener("click", () => {
+      localStorage.removeItem("gh_user");
+      localStorage.removeItem("gh_repo");
+      $("acctUser").value = "";
+      $("acctRepo").value = "";
+      renderAccount();
+      refreshPresetLabels();
+      $("acctModal").classList.remove("open");
+    });
+    $("acctSave").addEventListener("click", () => {
+      const u = $("acctUser").value.trim();
+      const r = $("acctRepo").value.trim();
+      if (u) localStorage.setItem("gh_user", u);
+      else localStorage.removeItem("gh_user");
+      if (r) localStorage.setItem("gh_repo", r);
+      else localStorage.removeItem("gh_repo");
+      renderAccount();
+      refreshPresetLabels();
+      $("acctModal").classList.remove("open");
+    });
+
+    // Auth
     $("authBtn").addEventListener("click", () => {
       $("token").value = getToken();
       renderAuth();
@@ -505,7 +603,6 @@
     $("gCopy").addEventListener("click", () =>
       navigator.clipboard?.writeText($("gOut").textContent));
 
-    // Close modals on backdrop click
     document.querySelectorAll(".modal").forEach((m) => {
       m.addEventListener("click", (e) => {
         if (e.target === m) m.classList.remove("open");
@@ -520,6 +617,7 @@
     buildPresetDropdown();
     wire();
     renderHistory();
+    renderAccount();
     syncPresetSelection();
     $("count").textContent = count;
     $("gExample").click();
