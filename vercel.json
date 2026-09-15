@@ -1,9 +1,7 @@
 {
   "version": 2,
   "functions": {
-    "api/github/[...path].js": { "maxDuration": 60, "memory": 512 },
-    "api/graphql.js":          { "maxDuration": 60, "memory": 512 },
-    "api/meta.js":             { "maxDuration": 15, "memory": 256 }
+    "api/**/*.js": { "maxDuration": 60, "memory": 512 }
   },
   "headers": [
     {
