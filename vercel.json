@@ -1,10 +1,13 @@
 {
   "version": 2,
   "functions": {
-    "api/github/[...path].js": { "maxDuration": 60, "memory": 512 },
-    "api/graphql.js":          { "maxDuration": 60, "memory": 512 },
-    "api/meta.js":             { "maxDuration": 30, "memory": 256 }
+    "api/github.js":  { "maxDuration": 60, "memory": 512 },
+    "api/graphql.js": { "maxDuration": 60, "memory": 512 },
+    "api/meta.js":    { "maxDuration": 30, "memory": 256 }
   },
+  "rewrites": [
+    { "source": "/api/github/:path*", "destination": "/api/github?githubPath=:path*" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
