@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1.0">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#080b10">
 <title>jafhub-full · Documentation</title>
@@ -15,6 +15,7 @@ header{position:sticky;top:0;z-index:10;background:#080b10e8;border-bottom:1px s
 .top{max-width:1180px;margin:auto;display:flex;align-items:center;gap:10px;padding:11px 16px}
 .logo{font-weight:850;letter-spacing:-.02em}.version{font-size:10px;color:var(--green);border:1px solid #315c3b;border-radius:999px;padding:3px 7px}
 .sp{flex:1}.search{width:190px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);outline:none}
+.top a button{padding:8px 12px;background:#238636;border:1px solid #2ea043;border-radius:8px;color:#eef2f7;cursor:pointer;font-weight:700}
 .layout{max-width:1180px;margin:auto;display:grid;grid-template-columns:205px minmax(0,1fr);gap:28px;padding:25px 16px 70px}
 aside{position:sticky;top:64px;height:calc(100vh - 88px);overflow:auto}
 aside .label{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.1em;margin:12px 8px 5px}
@@ -44,122 +45,88 @@ footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:v
 </style>
 </head>
 <body>
-<header>
-  <div class="top">
-    <div class="logo">◉ jafhub-full</div>
-    <span class="version">V3 DOCS</span>
-    <div class="sp"></div>
-    <input id="search" class="search" placeholder="Filter documentation…">
-    <a href="/"><button style="padding:8px 12px;background:#238636;border:1px solid #2ea043;border-radius:8px;color:#eef2f7;cursor:pointer;font-weight:700">Open Playground</button></a>
-  </div>
-</header>
-
+<header><div class="top"><div class="logo">◉ jafhub-full</div><span class="version">V3 DOCS</span><div class="sp"></div><input id="search" class="search" placeholder="Filter documentation…"><a href="/"><button>Open Playground</button></a></div></header>
 <div class="layout">
 <aside>
-  <div class="label">GUIDE</div>
-  <a href="#overview">Overview</a>
-  <a href="#quickstart">Quick start</a>
-  <a href="#features">Features</a>
-  <a href="#architecture">Architecture</a>
-  <div class="label">API</div>
-  <a href="#rest">REST proxy</a>
-  <a href="#graphql">GraphQL</a>
-  <a href="#meta">Meta</a>
-  <a href="#headers">Headers</a>
-  <a href="#ratelimits">Rate limits</a>
-  <div class="label">AUTH</div>
-  <a href="#auth">Authentication</a>
-  <a href="#security">Security</a>
-  <div class="label">DEPLOYMENT</div>
-  <a href="#deploy">Vercel</a>
-  <a href="#files">Project files</a>
-  <a href="#config">Configuration</a>
+<div class="label">GUIDE</div>
+<a href="#overview">Overview</a><a href="#quickstart">Quick start</a><a href="#features">Features</a><a href="#architecture">Architecture</a>
+<div class="label">API</div>
+<a href="#rest">REST proxy</a><a href="#graphql">GraphQL</a><a href="#meta">Meta</a><a href="#catalog">Endpoint catalog</a><a href="#headers">Headers</a><a href="#ratelimits">Rate limits</a>
+<div class="label">CONFIG</div>
+<a href="#account">Account</a><a href="#auth">Authentication</a><a href="#security">Security</a>
+<div class="label">DEPLOYMENT</div>
+<a href="#deploy">Vercel</a><a href="#files">Project files</a><a href="#config">Configuration</a>
 </aside>
-
 <main>
 <section id="overview">
-  <div class="eyebrow">GITHUB API LABORATORY</div>
-  <h1>jafhub-full</h1>
-  <p class="lead">A compact, interactive GitHub REST + GraphQL explorer designed to run as a Vercel serverless application. Supports both a shared server-side token and per-user client tokens, with strict header and path allowlisting.</p>
-  <p><span class="pill">REST</span><span class="pill">GraphQL</span><span class="pill">Vercel</span><span class="pill">Node 20</span><span class="pill">Server + client token</span><span class="pill">Rate telemetry</span><span class="pill">Mobile</span></p>
+<div class="eyebrow">GITHUB API LABORATORY</div>
+<h1>jafhub-full</h1>
+<p class="lead">A compact, interactive GitHub REST + GraphQL explorer designed to run as a Vercel serverless application. Supports both a shared server-side token and per-user client tokens, a configurable account, and strict header and path allowlisting.</p>
+<p><span class="pill">REST</span><span class="pill">GraphQL</span><span class="pill">Vercel</span><span class="pill">Node 20</span><span class="pill">Server + client token</span><span class="pill">Configurable account</span><span class="pill">Rate telemetry</span><span class="pill">Mobile</span></p>
 </section>
 
-<section id="quickstart">
-  <h2>Quick start</h2>
-  <ol>
-    <li>Create a new GitHub repository and upload the project.</li>
-    <li>Import the repository into Vercel.</li>
-    <li>(Optional) set <code>GITHUB_TOKEN</code> and <code>ALLOWED_ORIGINS</code> in Vercel environment variables.</li>
-    <li>Deploy.</li>
-    <li>Open the playground. Choose <b>Auth</b> to enter a personal fine-grained PAT (overrides the server token for your requests), or leave it blank to use the server token / public access.</li>
-  </ol>
-  <div class="call"><b>Local development:</b> install dependencies then run <code>npm run dev</code> with the Vercel CLI.</div>
+<section id="quickstart"><h2>Quick start</h2>
+<ol>
+<li>Create a new GitHub repository and upload the project.</li>
+<li>Import the repository into Vercel.</li>
+<li>(Optional) set <code>GITHUB_TOKEN</code> and <code>ALLOWED_ORIGINS</code> in Vercel environment variables.</li>
+<li>Deploy.</li>
+<li>Open the playground. Tap <b>Account</b> to set your GitHub username and default repo. Tap <b>Auth</b> only if you want to override the server token with your own PAT.</li>
+</ol>
+<div class="call"><b>Local development:</b> install dependencies then run <code>npm run dev</code> with the Vercel CLI.</div>
 </section>
 
-<section id="features">
-  <h2>Features</h2>
-  <div class="grid">
-    <div class="card"><b>REST Explorer</b><p>GET, POST, PUT, PATCH, DELETE, HEAD against arbitrary GitHub REST paths.</p></div>
-    <div class="card"><b>GraphQL Explorer</b><p>Run GraphQL queries with JSON variables and inspect the response.</p></div>
-    <div class="card"><b>Dual auth</b><p>Server env token by default; per-user PAT override for the browser.</p></div>
-    <div class="card"><b>Rate &amp; Usage</b><p>Observed limit, remaining, used and resource from GitHub headers.</p></div>
-    <div class="card"><b>Request History</b><p>Recent method, path, status and latency per session.</p></div>
-    <div class="card"><b>Developer tools</b><p>JSON formatter, raw/pretty toggle, copy, cURL generator.</p></div>
-    <div class="card"><b>Endpoint catalog</b><p>Core, repos, issues/PRs, search, orgs, Actions, gists, Git data, packages, security.</p></div>
-    <div class="card"><b>Custom paths</b><p>Any GitHub REST path can be typed directly.</p></div>
-    <div class="card"><b>Hardened proxy</b><p>Method allowlist, header allowlist, body caps, path traversal rejection, CORS allowlist.</p></div>
-  </div>
-</section>
+<section id="features"><h2>Features</h2>
+<div class="grid">
+<div class="card"><b>REST Explorer</b><p>GET, POST, PUT, PATCH, DELETE, HEAD against arbitrary GitHub REST paths.</p></div>
+<div class="card"><b>GraphQL Explorer</b><p>Run GraphQL queries with JSON variables and inspect responses.</p></div>
+<div class="card"><b>Dual auth</b><p>Server env token by default; per-user PAT override for the browser.</p></div>
+<div class="card"><b>Configurable account</b><p>Username and default repo stored per-browser; catalog paths resolve automatically.</p></div>
+<div class="card"><b>Rate &amp; Usage</b><p>Observed limit, remaining, used and resource from GitHub headers.</p></div>
+<div class="card"><b>Request History</b><p>Recent method, path, status and latency per session.</p></div>
+<div class="card"><b>Developer tools</b><p>JSON formatter, raw/pretty toggle, copy, cURL generator.</p></div>
+<div class="card"><b>Endpoint catalog</b><p>Core, repos, issues/PRs, search, orgs, Actions, gists, Git data, packages, security.</p></div>
+<div class="card"><b>Hardened proxy</b><p>Method allowlist, header allowlist, body caps, path traversal rejection, CORS allowlist.</p></div>
+</div></section>
 
-<section id="architecture">
-  <h2>Architecture</h2>
+<section id="architecture"><h2>Architecture</h2>
 <pre>Browser
   │
-  ├── /api/github/&lt;path&gt; ──► GitHub REST API
-  ├── /api/graphql ─────────► GitHub GraphQL API
-  └── /api/meta ────────────► Server info &amp; auth mode
-          │
-          ▼
-      GitHub response
-          │
-          ▼
-     Playground UI</pre>
-  <p>All traffic is same-origin. The browser never talks to <code>api.github.com</code> directly.</p>
+  ├─ /api/github/&lt;path&gt; ─ rewrite :path* ─ api/github.js ─► GitHub REST
+  ├─ /api/graphql ────────────────────── api/graphql.js ─► GitHub GraphQL
+  └─ /api/meta ───────────────────────── api/meta.js</pre>
+<p>All traffic is same-origin. The browser never talks to <code>api.github.com</code> directly.</p>
 </section>
 
-<section id="rest">
-  <h2>REST proxy</h2>
-  <p>The catch-all route <code>api/github/[...path].js</code> maps:</p>
-<pre>GET /api/github/repos/OWNER/REPO/issues?state=open</pre>
-  <p>to:</p>
-<pre>GET https://api.github.com/repos/OWNER/REPO/issues?state=open</pre>
-  <table>
-    <tr><th>Method</th><th>Supported</th><th>Typical use</th></tr>
-    <tr><td class="method GET">GET</td><td>✓</td><td>Read, list, search.</td></tr>
-    <tr><td class="method POST">POST</td><td>✓</td><td>Create resources, trigger actions.</td></tr>
-    <tr><td class="method PUT">PUT</td><td>✓</td><td>Replace/update operations.</td></tr>
-    <tr><td class="method PATCH">PATCH</td><td>✓</td><td>Partial updates.</td></tr>
-    <tr><td class="method DELETE">DELETE</td><td>✓</td><td>Delete supported resources.</td></tr>
-    <tr><td class="method GET">HEAD</td><td>✓</td><td>Metadata only.</td></tr>
-  </table>
-  <h3>Body limit</h3>
-  <p>REST requests are capped at 1 MB. Larger bodies receive <code>413</code>.</p>
+<section id="rest"><h2>REST proxy</h2>
+<p>The REST endpoint is a normal file, <code>api/github.js</code>, wired to a <code>:path*</code> rewrite in <code>vercel.json</code>:</p>
+<pre>{ "source": "/api/github/:path*", "destination": "/api/github?githubPath=:path*" }</pre>
+<p>A request such as <code>GET /api/github/repos/OWNER/REPO/issues?state=open</code> is forwarded to <code>GET https://api.github.com/repos/OWNER/REPO/issues?state=open</code>.</p>
+<table>
+<tr><th>Method</th><th>Supported</th><th>Typical use</th></tr>
+<tr><td class="method GET">GET</td><td>✓</td><td>Read, list, search.</td></tr>
+<tr><td class="method POST">POST</td><td>✓</td><td>Create resources, trigger actions.</td></tr>
+<tr><td class="method PUT">PUT</td><td>✓</td><td>Replace/update operations.</td></tr>
+<tr><td class="method PATCH">PATCH</td><td>✓</td><td>Partial updates.</td></tr>
+<tr><td class="method DELETE">DELETE</td><td>✓</td><td>Delete supported resources.</td></tr>
+<tr><td class="method GET">HEAD</td><td>✓</td><td>Metadata only.</td></tr>
+</table>
+<h3>Body limit</h3>
+<p>REST requests are capped at 1 MB. Larger bodies receive <code>413</code>.</p>
 </section>
 
-<section id="graphql">
-  <h2>GraphQL</h2>
-  <p>Endpoint: <code>POST /api/graphql</code>. Body:</p>
+<section id="graphql"><h2>GraphQL</h2>
+<p>Endpoint: <code>POST /api/graphql</code>. Body:</p>
 <pre>{
   "query": "query Viewer { viewer { login name } }",
   "variables": {},
   "operationName": "Viewer"
 }</pre>
-  <p>Body limit: 256 KB. Upstream target: <code>https://api.github.com/graphql</code>.</p>
+<p>Body limit: 256 KB. Upstream target: <code>https://api.github.com/graphql</code>.</p>
 </section>
 
-<section id="meta">
-  <h2>Meta</h2>
-  <p>Endpoint: <code>GET /api/meta</code>. Returns server information useful to the frontend:</p>
+<section id="meta"><h2>Meta</h2>
+<p>Endpoint: <code>GET /api/meta</code>. Returns server information used by the frontend:</p>
 <pre>{
   "name": "jafhub-full",
   "version": "3.0.0",
@@ -176,116 +143,140 @@ footer{margin-top:42px;padding-top:18px;border-top:1px solid var(--line);color:v
 }</pre>
 </section>
 
-<section id="headers">
-  <h2>Headers</h2>
-  <h3>Request headers forwarded (allowlist)</h3>
-  <table>
-    <tr><th>Header</th><th>Notes</th></tr>
-    <tr><td><code>Accept</code></td><td>Defaults to <code>application/vnd.github+json</code>.</td></tr>
-    <tr><td><code>Content-Type</code></td><td>Forwarded for POST/PUT/PATCH/DELETE.</td></tr>
-    <tr><td><code>If-None-Match</code>, <code>If-Match</code></td><td>Conditional requests.</td></tr>
-    <tr><td><code>X-GitHub-Api-Version</code></td><td>Defaults to <code>2022-11-28</code>.</td></tr>
-    <tr><td><code>Authorization</code></td><td>See <a href="#auth">Auth</a> priority order.</td></tr>
-  </table>
-
-  <h3>Response headers exposed (allowlist)</h3>
-  <table>
-    <tr><th>Header</th><th>Purpose</th></tr>
-    <tr><td><code>x-ratelimit-limit</code></td><td>Observed request limit.</td></tr>
-    <tr><td><code>x-ratelimit-remaining</code></td><td>Observed remaining requests.</td></tr>
-    <tr><td><code>x-ratelimit-used</code></td><td>Observed usage.</td></tr>
-    <tr><td><code>x-ratelimit-resource</code></td><td>Rate-limit resource bucket.</td></tr>
-    <tr><td><code>x-ratelimit-reset</code></td><td>Reset timestamp.</td></tr>
-    <tr><td><code>x-github-request-id</code></td><td>Debugging identifier.</td></tr>
-    <tr><td><code>etag</code>, <code>last-modified</code>, <code>cache-control</code></td><td>Caching.</td></tr>
-    <tr><td><code>link</code></td><td>Pagination.</td></tr>
-    <tr><td><code>retry-after</code></td><td>Backoff hint.</td></tr>
-    <tr><td><code>deprecation</code>, <code>sunset</code></td><td>API lifecycle metadata.</td></tr>
-    <tr><td><code>x-playground-auth-mode</code></td><td>Which auth mode (<code>client</code>/<code>server</code>/<code>public</code>) was used for this request.</td></tr>
-  </table>
+<section id="catalog"><h2>Endpoint catalog</h2>
+<p>Every path uses <code>{user}</code> and <code>{repo}</code> tokens that are substituted with the values from the Account dialog before a request is sent.</p>
+<table>
+<tr><th>Group</th><th>Examples</th></tr>
+<tr><td>Core</td><td><code>/</code>, <code>/user</code>, <code>/rate_limit</code>, user lookups.</td></tr>
+<tr><td>Repositories</td><td>Repository details, branches, commits, contents, releases, tags, collaborators, contributors, deployments, environments, webhooks.</td></tr>
+<tr><td>Issues &amp; PRs</td><td>List/create/update issues; list/update pull requests; PR files and commits.</td></tr>
+<tr><td>Search</td><td>Repository, code, issue, user, and commit search.</td></tr>
+<tr><td>Organizations</td><td>User orgs, org details, repos, members, teams.</td></tr>
+<tr><td>Actions</td><td>Workflow runs, workflows, artifacts, dispatch.</td></tr>
+<tr><td>Gists &amp; Notifications</td><td>Own/public gists, individual gists, notifications.</td></tr>
+<tr><td>Git Data</td><td>Refs, trees, commits, blobs.</td></tr>
+<tr><td>Packages &amp; Security</td><td>Packages, vulnerability alerts, code scanning, secret scanning.</td></tr>
+</table>
+<p class="muted">The catalog is a convenience layer. Use the custom path field for anything not listed.</p>
 </section>
 
-<section id="ratelimits">
-  <h2>Rate limits &amp; usage</h2>
-  <p>The <b>Rate &amp; Usage</b> tab displays values observed directly from GitHub response headers. It does not compute a universal quota, because GitHub exposes different limits per resource bucket and per authentication mode.</p>
-  <div class="call warn"><b>Reminder:</b> the session counter is a playground metric, not GitHub's remaining quota.</div>
+<section id="headers"><h2>Headers</h2>
+<h3>Request headers forwarded (allowlist)</h3>
+<table>
+<tr><th>Header</th><th>Notes</th></tr>
+<tr><td><code>Accept</code></td><td>Defaults to <code>application/vnd.github+json</code>.</td></tr>
+<tr><td><code>Content-Type</code></td><td>Forwarded for POST/PUT/PATCH/DELETE.</td></tr>
+<tr><td><code>If-None-Match</code>, <code>If-Match</code></td><td>Conditional requests.</td></tr>
+<tr><td><code>X-GitHub-Api-Version</code></td><td>Defaults to <code>2022-11-28</code>.</td></tr>
+<tr><td><code>Authorization</code></td><td>See <a href="#auth">Auth</a> priority order.</td></tr>
+</table>
+<h3>Response headers exposed (allowlist)</h3>
+<table>
+<tr><th>Header</th><th>Purpose</th></tr>
+<tr><td><code>x-ratelimit-limit</code></td><td>Observed request limit.</td></tr>
+<tr><td><code>x-ratelimit-remaining</code></td><td>Observed remaining requests.</td></tr>
+<tr><td><code>x-ratelimit-used</code></td><td>Observed usage.</td></tr>
+<tr><td><code>x-ratelimit-resource</code></td><td>Rate-limit resource bucket.</td></tr>
+<tr><td><code>x-ratelimit-reset</code></td><td>Reset timestamp.</td></tr>
+<tr><td><code>x-github-request-id</code></td><td>Debugging identifier.</td></tr>
+<tr><td><code>etag</code>, <code>last-modified</code>, <code>cache-control</code></td><td>Caching.</td></tr>
+<tr><td><code>link</code></td><td>Pagination.</td></tr>
+<tr><td><code>retry-after</code></td><td>Backoff hint.</td></tr>
+<tr><td><code>deprecation</code>, <code>sunset</code></td><td>API lifecycle metadata.</td></tr>
+<tr><td><code>x-playground-auth-mode</code></td><td>Which auth mode was used.</td></tr>
+</table>
 </section>
 
-<section id="auth">
-  <h2>Authentication</h2>
-  <p>The proxy resolves an <code>Authorization</code> header using this priority:</p>
-  <table>
-    <tr><th>Priority</th><th>Source</th><th>Mode reported</th></tr>
-    <tr><td>1</td><td>Client <code>Authorization: Bearer …</code></td><td><code>client</code></td></tr>
-    <tr><td>2</td><td>Server env <code>GITHUB_TOKEN</code></td><td><code>server</code></td></tr>
-    <tr><td>3</td><td>None</td><td><code>public</code></td></tr>
-  </table>
-  <p>Every proxy response carries <code>X-Playground-Auth-Mode</code> so the caller can confirm which path was taken. The UI also shows the effective mode in the header bar.</p>
-  <h3>Client tokens</h3>
-  <p>Enter a GitHub fine-grained PAT via <b>Auth</b>. The UI stores it in <code>localStorage</code> and sends it as <code>Authorization: Bearer github_pat_…</code>.</p>
-  <h3>Server token</h3>
-  <p>Set <code>GITHUB_TOKEN</code> in Vercel environment variables. Never commit it. When set, unauthenticated browser requests automatically use it.</p>
+<section id="ratelimits"><h2>Rate limits &amp; usage</h2>
+<p>The <b>Rate &amp; Usage</b> tab displays values observed directly from GitHub response headers. It does not compute a universal quota, because GitHub exposes different limits per resource bucket and per authentication mode.</p>
+<div class="call warn"><b>Reminder:</b> the session counter is a playground metric, not GitHub's remaining quota.</div>
 </section>
 
-<section id="security">
-  <h2>Security</h2>
-  <div class="call warn"><b>Browser storage warning:</b> the playground stores a client-entered PAT in <code>localStorage</code>. Any JavaScript running on the same origin can read it. This is fine for a personal developer playground; not a hardened secret vault.</div>
-  <ul>
-    <li>The proxy never forwards to arbitrary upstreams — the GitHub host is hardcoded.</li>
-    <li>Request headers are allowlisted.</li>
-    <li>Response headers are allowlisted.</li>
-    <li>Path segments are validated and encoded; <code>..</code>, <code>://</code>, <code>\0</code> are rejected.</li>
-    <li>HTTP methods are allowlisted.</li>
-    <li>Body size caps: 1 MB (REST), 256 KB (GraphQL).</li>
-    <li>CORS is off by default. Set <code>ALLOWED_ORIGINS</code> only when you need cross-origin access.</li>
-    <li>Use a fine-grained PAT with the minimum scope and a short expiration.</li>
-  </ul>
+<section id="account"><h2>Account</h2>
+<p>Set your username and default repository in the <b>Account</b> dialog (top-right of the header). Both values are stored in this browser's <code>localStorage</code> and never sent to the server except as part of the paths you actually request.</p>
+<table>
+<tr><th>Storage key</th><th>Contents</th></tr>
+<tr><td><code>gh_user</code></td><td>GitHub username.</td></tr>
+<tr><td><code>gh_repo</code></td><td>Default repository name.</td></tr>
+</table>
+<p>Every catalog entry uses <code>{user}</code> and <code>{repo}</code> tokens, which are replaced with these values before the request is dispatched. If a token is left unresolved, the UI refuses to send and asks you to open the Account dialog.</p>
 </section>
 
-<section id="deploy">
-  <h2>Vercel deployment</h2>
-  <ol>
-    <li>Create a new GitHub repository.</li>
-    <li>Push the project files.</li>
-    <li>Import the repository into Vercel.</li>
-    <li>(Optional) set <code>GITHUB_TOKEN</code> and <code>ALLOWED_ORIGINS</code>.</li>
-    <li>Deploy. No build step — static HTML + serverless functions.</li>
-  </ol>
-  <h3>Local commands</h3>
+<section id="auth"><h2>Authentication</h2>
+<p>The proxy resolves an <code>Authorization</code> header using this priority:</p>
+<table>
+<tr><th>Priority</th><th>Source</th><th>Mode reported</th></tr>
+<tr><td>1</td><td>Client <code>Authorization: Bearer …</code></td><td><code>client</code></td></tr>
+<tr><td>2</td><td>Server env <code>GITHUB_TOKEN</code></td><td><code>server</code></td></tr>
+<tr><td>3</td><td>None</td><td><code>public</code></td></tr>
+</table>
+<p>Every proxy response carries <code>X-Playground-Auth-Mode</code> so the caller can confirm which path was taken. The UI also shows the effective mode in the header bar.</p>
+<h3>Client tokens</h3>
+<p>Enter a GitHub fine-grained PAT via <b>Auth</b>. The UI stores it in <code>localStorage</code> and sends it as <code>Authorization: Bearer github_pat_…</code>.</p>
+<h3>Server token</h3>
+<p>Set <code>GITHUB_TOKEN</code> in Vercel environment variables. Never commit it. When set, unauthenticated browser requests automatically use it.</p>
+</section>
+
+<section id="security"><h2>Security</h2>
+<div class="call warn"><b>Browser storage warning:</b> the playground stores a client-entered PAT in <code>localStorage</code>. Any JavaScript running on the same origin can read it. This is fine for a personal developer playground; not a hardened secret vault.</div>
+<ul>
+<li>The proxy never forwards to arbitrary upstreams — the GitHub host is hardcoded.</li>
+<li>Request headers are allowlisted.</li>
+<li>Response headers are allowlisted.</li>
+<li>Path segments are validated and encoded; <code>..</code>, <code>://</code>, <code>\0</code>, <code>/</code>, <code>\\</code> rejected.</li>
+<li>HTTP methods are allowlisted.</li>
+<li>Body size caps: 1 MB (REST), 256 KB (GraphQL).</li>
+<li>CORS is off by default. Set <code>ALLOWED_ORIGINS</code> only when you need cross-origin access.</li>
+<li>Use a fine-grained PAT with the minimum scope and a short expiration.</li>
+</ul>
+</section>
+
+<section id="deploy"><h2>Vercel deployment</h2>
+<ol>
+<li>Create a new GitHub repository.</li>
+<li>Push the project files.</li>
+<li>Import the repository into Vercel.</li>
+<li>(Optional) set <code>GITHUB_TOKEN</code> and <code>ALLOWED_ORIGINS</code>.</li>
+<li>Deploy. No build step — static HTML + serverless functions.</li>
+</ol>
+<h3>Local commands</h3>
 <pre>npm install
 npm run dev</pre>
 </section>
 
-<section id="files">
-  <h2>Project files</h2>
-  <table>
-    <tr><th>File</th><th>Purpose</th></tr>
-    <tr><td><code>api/github/[...path].js</code></td><td>REST proxy (catch-all under /api/github).</td></tr>
-    <tr><td><code>api/graphql.js</code></td><td>GraphQL proxy.</td></tr>
-    <tr><td><code>api/meta.js</code></td><td>Server info &amp; auth-mode endpoint.</td></tr>
-    <tr><td><code>api/_lib/github.js</code></td><td>Shared helpers (auth, headers, CORS, body).</td></tr>
-    <tr><td><code>public/index.html</code></td><td>Playground UI.</td></tr>
-    <tr><td><code>public/app.js</code></td><td>Playground logic.</td></tr>
-    <tr><td><code>public/style.css</code></td><td>Playground styles.</td></tr>
-    <tr><td><code>public/docs.html</code></td><td>This documentation page.</td></tr>
-    <tr><td><code>package.json</code></td><td>Metadata, ESM, Node 20.x.</td></tr>
-    <tr><td><code>vercel.json</code></td><td>Function sizing, security headers.</td></tr>
-    <tr><td><code>.env.example</code></td><td>Environment variable template.</td></tr>
-    <tr><td><code>.gitignore</code></td><td>Ignore node_modules, .vercel, .env.</td></tr>
-    <tr><td><code>README.md</code></td><td>Project overview.</td></tr>
-  </table>
+<section id="files"><h2>Project files</h2>
+<table>
+<tr><th>File</th><th>Purpose</th></tr>
+<tr><td><code>api/github.js</code></td><td>REST proxy (single file; path from rewrite).</td></tr>
+<tr><td><code>api/graphql.js</code></td><td>GraphQL proxy.</td></tr>
+<tr><td><code>api/meta.js</code></td><td>Server info &amp; auth-mode endpoint.</td></tr>
+<tr><td><code>api/_lib/github.js</code></td><td>Shared helpers (auth, headers, CORS, body, path).</td></tr>
+<tr><td><code>public/index.html</code></td><td>Playground UI.</td></tr>
+<tr><td><code>public/app.js</code></td><td>Playground logic.</td></tr>
+<tr><td><code>public/style.css</code></td><td>Playground styles.</td></tr>
+<tr><td><code>public/docs.html</code></td><td>This documentation page.</td></tr>
+<tr><td><code>package.json</code></td><td>Metadata, ESM, Node 20.x.</td></tr>
+<tr><td><code>vercel.json</code></td><td>Function sizing, rewrites, security headers.</td></tr>
+<tr><td><code>.env.example</code></td><td>Environment variable template.</td></tr>
+<tr><td><code>.gitignore</code></td><td>Ignore node_modules, .vercel, .env.</td></tr>
+<tr><td><code>README.md</code></td><td>Project overview.</td></tr>
+</table>
 </section>
 
-<section id="config">
-  <h2>Configuration</h2>
-  <p>Target Node <code>20.x</code>. Function size/time limits are declared in <code>vercel.json</code>:</p>
+<section id="config"><h2>Configuration</h2>
+<p>Target Node <code>20.x</code>. Function size/time limits and the REST rewrite are declared in <code>vercel.json</code>:</p>
 <pre>{
   "functions": {
-    "api/github/[...path].js": { "maxDuration": 60, "memory": 512 },
-    "api/graphql.js":          { "maxDuration": 60, "memory": 512 },
-    "api/meta.js":             { "maxDuration": 15, "memory": 256 }
-  }
+    "api/github.js":  { "maxDuration": 60, "memory": 512 },
+    "api/graphql.js": { "maxDuration": 60, "memory": 512 },
+    "api/meta.js":    { "maxDuration": 30, "memory": 256 }
+  },
+  "rewrites": [
+    { "source": "/api/github/:path*",
+      "destination": "/api/github?githubPath=:path*" }
+  ]
 }</pre>
+<p>The <code>rewrites</code> rule is what makes <code>/api/github/&lt;anything&gt;</code> reach <code>api/github.js</code>. Without it, only <code>/api/github</code> itself would resolve.</p>
 </section>
 
 <footer>jafhub-full · V3 · compact standalone documentation · built for Vercel</footer>
