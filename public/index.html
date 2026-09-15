@@ -2,20 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no,maximum-scale=1.0">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#080b10">
 <title>jafhub-full · GitHub API Playground</title>
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="style.css">
 <style>
-  /* Local tweaks for the preset dropdown; keeps it from dominating the bar. */
-  #preset {
-    max-width: 340px;
-    min-width: 180px;
-    background: var(--p3);
-  }
+  #preset { max-width: 340px; min-width: 180px; background: var(--p3); }
   #preset optgroup { color: var(--m); font-style: normal; }
   #preset option { color: var(--t); }
+  #acctBtn { padding: 6px 10px; font-size: 12px; }
+  #acctBtn .who { color: var(--b); font-weight: 700; }
   @media (max-width: 850px) {
     #preset { max-width: none; flex: 1 1 100%; }
   }
@@ -28,6 +25,9 @@
   <div class="sp"></div>
   <span id="authState" class="authstate public">● public</span>
   <span id="rate" class="rate">Rate —</span>
+  <button id="acctBtn" title="Configure account">
+    Account: <span class="who" id="acctName">not set</span>
+  </button>
   <button id="authBtn">Auth</button>
   <a href="/docs.html" style="text-decoration:none"><button>Docs</button></a>
 </header>
@@ -44,7 +44,7 @@
   <aside class="side" id="side"></aside>
   <main class="main">
 
-    <inputsection id="v-rest" class="view active">
+    <section id="v-rest" class="view active">
       <div class="bar">
         <select id="method" aria-label="HTTP method">
           <option>GET</option><option>POST</option><option>PUT</option>
@@ -52,7 +52,7 @@
         </select>
 
         <select id="preset" aria-label="API surface and endpoint">
-          <option value="">— Select API surface / endpoint —</option>
+          <option value="">— Select an endpoint —</option>
         </select>
 
         <input id="path" class="path" value="/user" spellcheck="false" aria-label="GitHub API path">
@@ -145,6 +145,9 @@
         </table>
         <p class="muted">The header <code>X-Playground-Auth-Mode</code> on every response reports which mode was used.</p>
 
+        <h3>Account</h3>
+        <p>Set your GitHub username and default repository in the <b>Account</b> dialog (top-right). The endpoint catalog uses <code>{user}</code> and <code>{repo}</code> tokens that resolve to those values, so every preset points at your account automatically.</p>
+
         <h3>Endpoints</h3>
         <ul>
           <li><code>/api/github/&lt;path&gt;</code> — REST proxy to <code>https://api.github.com</code></li>
@@ -164,6 +167,32 @@
     </section>
 
   </main>
+</div>
+
+<!-- Account modal -->
+<div id="acctModal" class="modal">
+  <div class="box">
+    <h2 style="margin-top:0">Account</h2>
+    <p class="muted">
+      Used to fill <code>{user}</code> and <code>{repo}</code> in catalog paths.
+      Stored in this browser's localStorage only.
+    </p>
+    <div style="display:grid;gap:10px;margin:10px 0">
+      <label style="display:grid;gap:4px">
+        <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em">GitHub username</span>
+        <input id="acctUser" placeholder="your-username" spellcheck="false" autocomplete="off">
+      </label>
+      <label style="display:grid;gap:4px">
+        <span class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em">Default repository</span>
+        <input id="acctRepo" placeholder="your-repo" spellcheck="false" autocomplete="off">
+      </label>
+    </div>
+    <div class="actions">
+      <button id="acctClear">Clear</button>
+      <button id="acctCancel">Cancel</button>
+      <button id="acctSave" class="primary">Save</button>
+    </div>
+  </div>
 </div>
 
 <!-- Auth modal -->
@@ -194,6 +223,6 @@
   </div>
 </div>
 
-<script src="./app.js" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>
